@@ -1,2 +1,2 @@
 # cryptopals
-Challenges from cryptopals.com
+Crypto challenges from [cryptopals.com](https://www.cryptopals.com)

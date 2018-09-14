@@ -2,9 +2,12 @@
 #define _HEX_TO_BASE_64_H_
 
 #include <string>
-#include <unordered_map>
+#include <map>
 
-static void populateBase64Vals(unordered_map<int,char> &vals)
+namespace base64 
+{
+
+static void populateBase64Vals(std::map<int,char> &vals)
 {
   vals[0] = 'A';
   vals[1] = 'B';
@@ -72,26 +75,66 @@ static void populateBase64Vals(unordered_map<int,char> &vals)
   vals[63] = '/';
 }
 
-/**
- * convert a hex string to a base64 string
- */
-std::string hexToBase64(const std::string &hex)
+static void populateHexVals(std::map<char,int> &hexVals)
 {
-  if(hex.empty())
+  hexVals['0'] = 0;
+  hexVals['1'] = 1;
+  hexVals['2'] = 2;
+  hexVals['3'] = 3;
+  hexVals['4'] = 4;
+  hexVals['5'] = 5;
+  hexVals['6'] = 6;
+  hexVals['7'] = 7;
+  hexVals['8'] = 8;
+  hexVals['9'] = 9;
+  hexVals['a'] = 10;
+  hexVals['b'] = 11;
+  hexVals['c'] = 12;
+  hexVals['d'] = 13;
+  hexVals['e'] = 14;
+  hexVals['f'] = 15;
+}
+
+static void exchange(int h[3], int b[2]) 
+{
+  b[0] = (h[0] << 2)+ ((h[1] & 0xC) >> 2);
+  b[1] = ((h[1] & 0x3) << 4) + h[2];
+}
+
+std::string encode(const std::string &hex)
+{
+  if(hex.empty() || hex.size() < 3)
   {
     return "";
   }
-  unordered_map<int,char> base64Vals;
+  std::map<char,int> hexVals;
+  populateHexVals(hexVals);
+  std::map<int,char> base64Vals;
   populateBase64Vals(base64Vals);
 
-  std::string ret;
+  int h[3] = { 0, 0, 0 };
+  int b[2] = { 0, 0 };
+
+  std::string encoded;
+  int count = 0;
   for(long long i = 0; i < hex.size(); i++)
   {
-    //
-    // TODO
-    //
+    h[count++] = hexVals[hex[i]];
+    if(count == 3) 
+    {
+      exchange(h, b);
+      encoded += base64Vals[b[0]];
+      encoded += base64Vals[b[1]];
+      count = 0;
+    }
   }
-  return ret;
+
+  while(count > 0 && count++ < 3)
+  {
+    encoded += '=';
+  }
+  return encoded;
 }
 
+}
 #endif

@@ -1,4 +1,4 @@
-#include "../HexToBase64.hpp"
+#include "../Base64.hpp"
 #include <iostream>
 #include <assert.h>
 
@@ -10,11 +10,11 @@ int main( int argc, const char *argv[] )
   std::string hex2 = "1c0111001f010100061a024b53535009181c"; 
   std::string expected2 = "HAERAB8BAQAGGgJLU1NQCRgc"; 
 
-  std::string base64 = base64::encode(hex);
+  std::string base64 = base64::hexencode(hex);
   std::cout << base64 << " ?= " << expected << std::endl;
   assert(base64 == expected);
 
-  std::string base64_2 = base64::encode(hex2);
+  std::string base64_2 = base64::hexencode(hex2);
   std::cout << base64_2 << " ?= " << expected2 << std::endl;
   assert(base64_2 == expected2);
 

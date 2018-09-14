@@ -1,6 +1,7 @@
-#ifndef _HEX_TO_BASE_64_H_
-#define _HEX_TO_BASE_64_H_
+#ifndef _BASE_64_HPP_
+#define _BASE_64_HPP_
 
+#include "Hex.hpp"
 #include <string>
 #include <map>
 
@@ -75,40 +76,18 @@ static void populateBase64Vals(std::map<int,char> &vals)
   vals[63] = '/';
 }
 
-static void populateHexVals(std::map<char,int> &hexVals)
-{
-  hexVals['0'] = 0;
-  hexVals['1'] = 1;
-  hexVals['2'] = 2;
-  hexVals['3'] = 3;
-  hexVals['4'] = 4;
-  hexVals['5'] = 5;
-  hexVals['6'] = 6;
-  hexVals['7'] = 7;
-  hexVals['8'] = 8;
-  hexVals['9'] = 9;
-  hexVals['a'] = 10;
-  hexVals['b'] = 11;
-  hexVals['c'] = 12;
-  hexVals['d'] = 13;
-  hexVals['e'] = 14;
-  hexVals['f'] = 15;
-}
-
 static void exchange(int h[3], int b[2]) 
 {
-  b[0] = (h[0] << 2)+ ((h[1] & 0xC) >> 2);
+  b[0] = (h[0] << 2) + ((h[1] & 0xC) >> 2);
   b[1] = ((h[1] & 0x3) << 4) + h[2];
 }
 
-std::string encode(const std::string &hex)
+std::string hexencode(const std::string &hex)
 {
   if(hex.empty() || hex.size() < 3)
   {
     return "";
   }
-  std::map<char,int> hexVals;
-  populateHexVals(hexVals);
   std::map<int,char> base64Vals;
   populateBase64Vals(base64Vals);
 
@@ -119,7 +98,7 @@ std::string encode(const std::string &hex)
   int count = 0;
   for(long long i = 0; i < hex.size(); i++)
   {
-    h[count++] = hexVals[hex[i]];
+    h[count++] = Hex::toDecimal(hex[i]);
     if(count == 3) 
     {
       exchange(h, b);
